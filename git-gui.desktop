@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Encoding=UTF-8
+Name=Git Gui
+Exec=/home/pattakosn/github.com/git-gui/build/bin/git-gui
+Icon=dobbs48
+Path=/home/pattakosn/github.com/git-gui/build/bin;
