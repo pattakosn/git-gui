@@ -1,8 +1,8 @@
 #find_package(libgit2 CONFIG REQUIRED)
-#find_package(PkgConfig REQUIRED)
-#pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
 #target_link_libraries(main PRIVATE PkgConfig::LIBGIT2)
-find_package(unofficial-libgit2 CONFIG REQUIRED)
+#find_package(unofficial-libgit2 CONFIG REQUIRED)
 #target_link_libraries(main PRIVATE unofficial::libgit2::libgit2)
 
 find_package(OpenGL REQUIRED)
@@ -37,9 +37,11 @@ add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
 target_link_libraries(git-gui
     PRIVATE
-        unofficial::libgit2::libgit2
+        #unofficial::libgit2::libgit2
+        PkgConfig::LIBGIT2
         glad
         OpenGL::GL
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+        #SDL_image
 )
