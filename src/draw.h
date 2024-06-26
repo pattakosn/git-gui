@@ -7,4 +7,5 @@ void my_imgui_loop_start();
 void my_imgui_loop_end();
 void my_imgui_demo();
 void my_imgui_stupid_win();
+void my_imgui_more_stupid_win();
 #endif

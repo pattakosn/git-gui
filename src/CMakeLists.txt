@@ -12,6 +12,9 @@ find_package(SDL2 CONFIG REQUIRED)
 add_library(glad glad/src/gl.c)
 target_include_directories(glad PUBLIC glad/include)
 
+add_library(stb_image stb/stb_image.cpp)
+target_include_directories(glad PUBLIC stb)
+
 set(IMGUI_SRC     imgui/imgui.cpp imgui/imgui.h
 imgui/imgui_draw.cpp
 imgui/imgui_tables.cpp
@@ -37,11 +40,11 @@ add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
 target_link_libraries(git-gui
     PRIVATE
-        #unofficial::libgit2::libgit2
-        PkgConfig::LIBGIT2
+        unofficial::libgit2::libgit2
+        #PkgConfig::LIBGIT2
         glad
         OpenGL::GL
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-        #SDL_image
+        stb_image
 )
