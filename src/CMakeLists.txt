@@ -32,7 +32,7 @@ imgui/misc/cpp/imgui_stdlib.cpp imgui/misc/cpp/imgui_stdlib.h
 #target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_CUSTOM=<SDL_opengl.h>  GL_GLEXT_PROTOTYPES=1)
 
 
-set(SOURCES git-gui.cpp mygit.cpp mygit.h)
+set(SOURCES git-gui.cpp my_git.cpp my_git.h draw.cpp draw.h)
 add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
 target_link_libraries(git-gui
