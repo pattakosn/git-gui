@@ -1,12 +1,12 @@
 // https://libgit2.org/docs/guides/101-samples/
 // clang-format off
 #include <iostream>
-#include "my_git.h"
+#include "git.h"
 #include "draw.h"
 // clang-format on
 
 int main(int, char **) {
-    std::cout << "\n\tGit-Gui 0.0.1\n\n";
+    std::cout << "\n[git-gui]\tGit-Gui 0.0.1\n\n";
     atexit(deinit);
     atexit(deinit);
     atexit(deinit);
