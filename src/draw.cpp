@@ -12,8 +12,8 @@
 
 SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height);
 
-static SDL_Window *Window = nullptr;
-static SDL_Renderer *Renderer = nullptr;
+static SDL_Window* Window = nullptr;
+static SDL_Renderer* Renderer = nullptr;
 static SDL_GLContext glcontext = nullptr;
 static constexpr int width = 1080;
 static constexpr int height = (width / 16.) * 9.;
@@ -47,12 +47,12 @@ void graphics_initialize() {
     SDL_GL_MakeCurrent(Window, glcontext);
     SDL_GL_SetSwapInterval(1);  // vsync
 
-//int icon_width;
-//int icon_length;
-//    SDL_Surface *icon = LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
-//    if (!icon) std::cerr << "error loading icon\n";
-//    SDL_SetWindowIcon(Window, icon);
-//    SDL_FreeSurface(icon);
+    // int icon_width;
+    // int icon_length;
+    //     SDL_Surface *icon = LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
+    //     if (!icon) std::cerr << "error loading icon\n";
+    //     SDL_SetWindowIcon(Window, icon);
+    //     SDL_FreeSurface(icon);
 
     SDL_SetWindowSize(Window, width, height);
     SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -81,13 +81,13 @@ void graphics_initialize() {
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     ImGui::StyleColorsDark();
     // ImGui::StyleColorsLight();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // IF using Docking Branch
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; 
+    // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     // Setup Platform/Renderer backends
     EXIT_ON_FALSE(!ImGui_ImplSDL2_InitForOpenGL(Window, glcontext), "Error Initializing ImGuiImplSDL2_OGL\n");
@@ -108,7 +108,7 @@ void graphics_shutdown() {
 
 int my_poll() {
     SDL_Event event;
-    //SDL_WaitEvent(&event);
+    // SDL_WaitEvent(&event);
     while (SDL_PollEvent(&event)) {
         // (Where your code calls SDL_PollEvent())
         ImGui_ImplSDL2_ProcessEvent(&event);  // Forward your event to backend
@@ -176,8 +176,7 @@ static bool show_another_window = false;
 void my_imgui_more_stupid_win() {
     static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
+    if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
     // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
     {
         static float f = 0.0f;
@@ -189,8 +188,8 @@ void my_imgui_more_stupid_win() {
         ImGui::Checkbox("Demo Window", &show_demo_window);  // Edit bools storing our window open/close state
         ImGui::Checkbox("Another Window", &show_another_window);
 
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);              // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float *)&clear_color);  // Edit 3 floats representing a color
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::ColorEdit3("clear color", (float*)&clear_color);  // Edit 3 floats representing a color
 
         if (ImGui::Button("Button"))  // Buttons return true when clicked (most widgets return true when edited/activated)
             counter++;
@@ -219,8 +218,7 @@ SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height) 
         return nullptr;
     }
 
-    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*)data, width, height, channels * 8, channels * width,
-                                                    0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*)data, width, height, channels * 8, channels * width, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 
     if (surface == nullptr) {
         fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
