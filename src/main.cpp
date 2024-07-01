@@ -1,5 +1,6 @@
 // https://libgit2.org/docs/guides/101-samples/
 // https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
+// https://possiblyashrub.github.io/imgui-docs/#/docs/latest/home
 // clang-format off
 #include <iostream>
 #include "git.h"
@@ -7,7 +8,7 @@
 #include <SDL_timer.h>
 // clang-format on
 
-static constexpr Uint64 FRAMES_PER_SECOND = 20U;
+static constexpr Uint64 FRAMES_PER_SECOND = 10U;
 static constexpr Uint64 SKIP_TICKS = 1000U / FRAMES_PER_SECOND;
 
 int main(int, char **) {
@@ -28,10 +29,11 @@ int main(int, char **) {
     while (my_poll()) {
         my_imgui_loop_start();
 
-        // my_imgui_demo();
-        my_imgui_stupid_win();
-        my_imgui_more_stupid_win();
-
+        my_imgui_demo();
+        // my_imgui_stupid_win();
+        // my_imgui_more_stupid_win();
+        menu();
+        bottombar();
         my_imgui_loop_end();
 
         next_tick += SKIP_TICKS;

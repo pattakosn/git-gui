@@ -36,3 +36,15 @@ void find_repo(std::string path, std::string max_path) {
     std::cout << "[libgit2] found repo at: " << root.ptr << "\n";
     git_buf_dispose(&root); /* returned path data must be freed after use */
 }
+
+int open_repo(char *path) {
+    int error;
+    git_repository *repo{nullptr};
+    error = git_repository_open(&repo, path);
+    if (error) {
+        const git_error *e = git_error_last();
+        std::cerr << "\tError " << error << "/" << e->klass << ": " << e->message << "\n";
+    }
+    git_repository_free(repo);
+    return error;
+}

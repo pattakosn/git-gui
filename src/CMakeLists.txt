@@ -4,6 +4,7 @@ pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
 
 find_package(OpenGL REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL2_image CONFIG REQUIRED)
 
 add_library(glad glad/src/gl.c)
 target_include_directories(glad PUBLIC glad/include)
@@ -23,7 +24,7 @@ set(IMGUI_SRC
 )
 
 set(SOURCES
-    git_gui.cpp
+    main.cpp
     git.cpp git.h 
     draw.cpp draw.h
 )
@@ -36,5 +37,6 @@ target_link_libraries(git-gui
         OpenGL::GL
         $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+        $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
         PkgConfig::LIBGIT2
 )

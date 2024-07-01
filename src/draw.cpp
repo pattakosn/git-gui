@@ -1,13 +1,17 @@
 // clang-format off
 #include <iostream>
-#include "draw.h"
+#include <filesystem>
+#include <cstring>
 #include <glad/gl.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
+#include <SDL_image.h>
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include "stb_image.h"
+#include "draw.h"
+#include "git.h"
 // clang-format on
 
 SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height);
@@ -15,7 +19,7 @@ SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height);
 static SDL_Window* Window = nullptr;
 static SDL_Renderer* Renderer = nullptr;
 static SDL_GLContext glcontext = nullptr;
-static constexpr int width = 1080;
+static constexpr int width = 1920;
 static constexpr int height = (width / 16.) * 9.;
 
 #define CHECK_SDL_RESULT(X, MSG)                                       \
@@ -37,6 +41,9 @@ static constexpr int height = (width / 16.) * 9.;
 void graphics_initialize() {
     CHECK_SDL_RESULT(SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO), "Initialisation failure: ");
 
+    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3), "Error setting GL_MAJOR_VERSION :");
+    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0), "Error setting GL_MINOR_VERSION :");
+    //    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -47,19 +54,17 @@ void graphics_initialize() {
     SDL_GL_MakeCurrent(Window, glcontext);
     SDL_GL_SetSwapInterval(1);  // vsync
 
-    // int icon_width;
-    // int icon_length;
-    //     SDL_Surface *icon = LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
-    //     if (!icon) std::cerr << "error loading icon\n";
-    //     SDL_SetWindowIcon(Window, icon);
-    //     SDL_FreeSurface(icon);
-
     SDL_SetWindowSize(Window, width, height);
     SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    SDL_SetWindowTitle(Window, "Context 4.6 with GLAD");
+    SDL_SetWindowTitle(Window, "git-gui");
     SDL_ShowWindow(Window);
-    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4), "Error setting GL_MAJOR_VERSION :");
-    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6), "Error setting GL_MINOR_VERSION :");
+    int icon_width;
+    int icon_length;
+    SDL_Surface* icon = IMG_Load(
+        "/home/pattakosn/github.com/git-gui/assets/git64-1.png");  // LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
+    if (!icon) std::cerr << "error loading icon\n";
+    SDL_SetWindowIcon(Window, icon);
+    SDL_FreeSurface(icon);
 
     int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
     printf("[ GLAD  ] Version %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
@@ -96,6 +101,15 @@ void graphics_initialize() {
     glClearColor(GL_GREY);
 }
 
+void basic_info() {
+    // ImGuiContext& g = *ImGui::GetCurrentContext();
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    ImGui::Text("%d vertices, %d indices (%d triangles)", io.MetricsRenderVertices, io.MetricsRenderIndices, io.MetricsRenderIndices / 3);
+    // ImGui::Text("%d visible windows, %d current allocations", io.MetricsRenderWindows, g.DebugAllocInfo.TotalAllocCount - g.DebugAllocInfo.TotalFreeCount);
+}
+
 void graphics_shutdown() {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
@@ -106,7 +120,10 @@ void graphics_shutdown() {
     SDL_Quit();
 }
 
+static bool please_exit = false;
 int my_poll() {
+    if (please_exit) return 0;
+
     SDL_Event event;
     // SDL_WaitEvent(&event);
     while (SDL_PollEvent(&event)) {
@@ -153,10 +170,7 @@ void my_imgui_loop_end() {
     SDL_GL_SwapWindow(Window);
 }
 
-void my_imgui_demo() {
-    // Show demo window! :)
-    ImGui::ShowDemoWindow();
-}
+void my_imgui_demo() { ImGui::ShowDemoWindow(); }
 
 void my_imgui_stupid_win() {
     float speed = 0.;
@@ -171,9 +185,10 @@ void my_imgui_stupid_win() {
     ImGui::End();
 }
 
-static bool show_demo_window = true;
+static bool show_demo_window = false;
 static bool show_another_window = false;
 void my_imgui_more_stupid_win() {
+    std::cout << "\t\t SKATA\n";
     static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
@@ -227,3 +242,174 @@ SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height) 
     stbi_image_free(data);
     return surface;
 }
+
+// TODO remove me
+static void HelpMarker(const char* desc) {
+    ImGui::TextDisabled("(?)");
+    if (ImGui::BeginItemTooltip()) {
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+bool show_open_menu = false;
+
+void OpenMenu() {
+    static char open_dir[128];
+    static bool once = true;
+    if (once) {
+        std::strncpy(open_dir, std::filesystem::current_path().c_str(), 127);
+        open_dir[127] = '\0';
+        once = false;
+    }
+
+    ImGui::SetWindowSize({300, 60});
+    if (ImGui::Begin("Open Repository in")) {
+        ImGui::InputText("directory", open_dir, IM_ARRAYSIZE(open_dir));
+        ImGui::SameLine();
+        HelpMarker(
+            "USER:\n"
+            "Hold SHIFT or use mouse to select text.\n"
+            "CTRL+Left/Right to word jump.\n"
+            "CTRL+A or Double-Click to select all.\n"
+            "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
+            "CTRL+Z,CTRL+Y undo/redo.\n"
+            "ESCAPE to revert.\n\n"
+            "PROGRAMMER:\n"
+            "You can use the ImGuiInputTextFlags_CallbackResize facility if you need to wire InputText() "
+            "to a dynamic string type. See misc/cpp/imgui_stdlib.h for an example (this is not demonstrated "
+            "in imgui_demo.cpp).");
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        float size = ImGui::CalcTextSize("Open").x + style.FramePadding.x * 2.0f;
+        float avail = ImGui::GetContentRegionAvail().x;
+        float off = (avail - size) * 0.5f;  // center alignment
+        if (off > 0.0f) ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
+        if (ImGui::Button("Open")) {
+            if (0 == open_repo(open_dir)) {
+                std::cout << "FOUND and opened repo in: " << open_dir << "\n";
+            } else {
+                std::cout << "Couldn't find or open repo in: " << open_dir << "\n";
+            }
+            show_open_menu = false;
+        }
+        ImGui::End();
+    }
+}
+
+void menu() {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            // ImGui::MenuItem("sample", NULL, false, false);
+            if (ImGui::MenuItem("Open repository", "Ctrl+O", &show_open_menu)) {
+                std::cout << "Open\n";
+            }
+            if (ImGui::MenuItem("Create repository", "Ctrl+N")) {
+                my_imgui_more_stupid_win();
+                std::cout << "Created\n";
+            }
+            if (ImGui::MenuItem("Scan for repositories")) {
+                std::cout << "Scanned\n";
+            }
+            if (ImGui::MenuItem("Quit", "Ctrl+z")) {
+                please_exit = true;
+                std::cout << "Au revoir\n";
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Repository")) {
+            if (ImGui::MenuItem("Fetch")) {
+                std::cout << "Fetch\n";
+            }
+            if (ImGui::MenuItem("Pull", "CTRL+P", false, false)) {
+                std::cout << "Pull\n";
+            }
+            if (ImGui::MenuItem("Push")) {
+                std::cout << "Push\n";
+            }  // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("a")) {
+            }
+            if (ImGui::MenuItem("b")) {
+            }
+            if (ImGui::MenuItem("c")) {
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+    if (show_open_menu) OpenMenu();
+}
+
+void bottombar() {
+    const static float toolbarSize = 19;
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, ImGui::GetIO().DisplaySize.y - toolbarSize));  // viewport->Pos.y));  // menuBarHeight));
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                                    ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+    ImGui::Begin("TOOLBAR", NULL, window_flags);
+    ImGui::PopStyleVar();
+    // auto lol = ImGui::CalcTextSize("Toolbar goes here");
+    // std::cout << "\t\t ()" << lol.x + ImGui::GetStyle().FramePadding.x * 2.0f << ", " << lol.y + ImGui::GetStyle().FramePadding.y * 2.0f << ")\n";
+    ImGui::Button("Toolbar goes here");  //, ImVec2(0, 37));
+
+    ImGui::End();
+}
+
+// const float toolbarSize = 50;
+//
+// void DockSpaceUI()
+//{
+//	ImGuiViewport* viewport = ImGui::GetMainViewport();
+//	ImGui::SetNextWindowPos(viewport->Pos + ImVec2(0, toolbarSize));
+//	ImGui::SetNextWindowSize(viewport->Size - ImVec2(0, toolbarSize));
+//	ImGui::SetNextWindowViewport(viewport->ID);
+//	ImGuiWindowFlags window_flags = 0
+//		| ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
+//		| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
+//		| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+//		| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+//
+//	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+//	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+//	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+//	ImGui::Begin("Master DockSpace", NULL, window_flags);
+//	ImGuiID dockMain = ImGui::GetID("MyDockspace");
+//
+//	// Save off menu bar height for later.
+//	menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
+//
+//	ImGui::DockSpace(dockMain);
+//	ImGui::End();
+//	ImGui::PopStyleVar(3);
+// }
+//
+// void ToolbarUI()
+//{
+//	ImGuiViewport* viewport = ImGui::GetMainViewport();
+//	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
+//	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
+//	ImGui::SetNextWindowViewport(viewport->ID);
+//
+//	ImGuiWindowFlags window_flags = 0
+//		| ImGuiWindowFlags_NoDocking
+//		| ImGuiWindowFlags_NoTitleBar
+//		| ImGuiWindowFlags_NoResize
+//		| ImGuiWindowFlags_NoMove
+//		| ImGuiWindowFlags_NoScrollbar
+//		| ImGuiWindowFlags_NoSavedSettings
+//		;
+//	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+//	ImGui::Begin("TOOLBAR", NULL, window_flags);
+//	ImGui::PopStyleVar();
+//
+//	ImGui::Button("Toolbar goes here", ImVec2(0, 37));
+//
+//	ImGui::End();
+// }
