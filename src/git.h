@@ -1,6 +1,6 @@
 #ifndef _GIT_H
 #define _GIT_H
-class string;
+#include <string>
 void init(void);
 void deinit(void);
 void check_error(int err);

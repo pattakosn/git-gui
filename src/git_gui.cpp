@@ -1,5 +1,6 @@
 // https://libgit2.org/docs/guides/101-samples/
 // https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html
+// https://possiblyashrub.github.io/imgui-docs/#/docs/latest/home
 // clang-format off
 #include <iostream>
 #include "git.h"
@@ -29,8 +30,9 @@ int main(int, char **) {
         my_imgui_loop_start();
 
         // my_imgui_demo();
-        my_imgui_stupid_win();
-        my_imgui_more_stupid_win();
+        // my_imgui_stupid_win();
+        // my_imgui_more_stupid_win();
+        menu();
 
         my_imgui_loop_end();
 

@@ -37,6 +37,8 @@ static constexpr int height = (width / 16.) * 9.;
 void graphics_initialize() {
     CHECK_SDL_RESULT(SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO), "Initialisation failure: ");
 
+    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3), "Error setting GL_MAJOR_VERSION :");
+    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0), "Error setting GL_MINOR_VERSION :");
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
@@ -58,8 +60,6 @@ void graphics_initialize() {
     SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_SetWindowTitle(Window, "Context 4.6 with GLAD");
     SDL_ShowWindow(Window);
-    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4), "Error setting GL_MAJOR_VERSION :");
-    CHECK_SDL_RESULT(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6), "Error setting GL_MINOR_VERSION :");
 
     int version = gladLoadGL((GLADloadfunc)SDL_GL_GetProcAddress);
     printf("[ GLAD  ] Version %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
@@ -106,7 +106,10 @@ void graphics_shutdown() {
     SDL_Quit();
 }
 
+static bool please_exit = false;
 int my_poll() {
+    if (please_exit) return 0;
+
     SDL_Event event;
     // SDL_WaitEvent(&event);
     while (SDL_PollEvent(&event)) {
@@ -171,9 +174,10 @@ void my_imgui_stupid_win() {
     ImGui::End();
 }
 
-static bool show_demo_window = true;
+static bool show_demo_window = false;
 static bool show_another_window = false;
 void my_imgui_more_stupid_win() {
+    std::cout << "\t\t SKATA\n";
     static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
@@ -226,4 +230,83 @@ SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height) 
     }
     stbi_image_free(data);
     return surface;
+}
+
+// TODO remove me
+static void HelpMarker(const char* desc) {
+    ImGui::TextDisabled("(?)");
+    if (ImGui::BeginItemTooltip()) {
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+}
+
+void OpenMenu() {
+    static char str0[128] = "Hello, world!";
+    ImGui::Begin("stupid window");
+    ImGui::InputText("input text", str0, IM_ARRAYSIZE(str0));
+    /*    ImGui::SameLine();
+        HelpMarker(
+            "USER:\n"
+            "Hold SHIFT or use mouse to select text.\n"
+            "CTRL+Left/Right to word jump.\n"
+            "CTRL+A or Double-Click to select all.\n"
+            "CTRL+X,CTRL+C,CTRL+V clipboard.\n"
+            "CTRL+Z,CTRL+Y undo/redo.\n"
+            "ESCAPE to revert.\n\n"
+            "PROGRAMMER:\n"
+            "You can use the ImGuiInputTextFlags_CallbackResize facility if you need to wire InputText() "
+            "to a dynamic string type. See misc/cpp/imgui_stdlib.h for an example (this is not demonstrated "
+            "in imgui_demo.cpp).");
+      */
+    ImGui::End();
+}
+
+bool show_open_menu = false;
+
+void menu() {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            // ImGui::MenuItem("sample", NULL, false, false);
+            if (ImGui::MenuItem("Open repository", "Ctrl+O")) {
+                std::cout << "Open\n";
+            }
+            if (ImGui::MenuItem("Create repository", "Ctrl+N")) {
+                my_imgui_more_stupid_win();
+                std::cout << "Created\n";
+            }
+            if (ImGui::MenuItem("Scan for repositories")) {
+                std::cout << "Scanned\n";
+            }
+            if (ImGui::MenuItem("Quit", "Ctrl+z")) {
+                please_exit = true;
+                std::cout << "Au revoir\n";
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("Repository")) {
+            if (ImGui::MenuItem("Fetch")) {
+                std::cout << "Fetch\n";
+            }
+            if (ImGui::MenuItem("Pull", "CTRL+P", false, false)) {
+                std::cout << "Pull\n";
+            }
+            if (ImGui::MenuItem("Push")) {
+                std::cout << "Push\n";
+            }  // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("a")) {
+            }
+            if (ImGui::MenuItem("b")) {
+            }
+            if (ImGui::MenuItem("c")) {
+            }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMainMenuBar();
+    }
+
+    if (show_open_menu) OpenMenu();
 }
