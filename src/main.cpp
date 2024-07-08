@@ -33,7 +33,7 @@ int main(int, char **) {
         // my_imgui_stupid_win();
         // my_imgui_more_stupid_win();
         menu();
-        bottombar();
+        bottom_bar();
         my_imgui_loop_end();
 
         next_tick += SKIP_TICKS;

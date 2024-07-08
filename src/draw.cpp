@@ -19,8 +19,8 @@ SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height);
 static SDL_Window* Window = nullptr;
 static SDL_Renderer* Renderer = nullptr;
 static SDL_GLContext glcontext = nullptr;
-static constexpr int width = 1920;
-static constexpr int height = (width / 16.) * 9.;
+static constexpr int width = 1200;
+static constexpr int height = (width / 4.) * 3.;
 
 #define CHECK_SDL_RESULT(X, MSG)                                       \
     do {                                                               \
@@ -36,7 +36,7 @@ static constexpr int height = (width / 16.) * 9.;
             exit(EXIT_FAILURE);             \
         }                                   \
     } while (0)
-#define GL_GREY .5, .5, .5, 1
+#define GL_GREY .15, .15, .15, 1
 
 void graphics_initialize() {
     CHECK_SDL_RESULT(SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO), "Initialisation failure: ");
@@ -343,23 +343,22 @@ void menu() {
     if (show_open_menu) OpenMenu();
 }
 
-void bottombar() {
-    const static float toolbarSize = 19;
+void bottom_bar() {
+    auto text_size = ImGui::CalcTextSize("FPS");
+    auto toolbar_size_y = text_size.y + ImGui::GetStyle().FramePadding.y;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, ImGui::GetIO().DisplaySize.y - toolbarSize));  // viewport->Pos.y));  // menuBarHeight));
-    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, ImGui::GetIO().DisplaySize.y - 2. * toolbar_size_y));  // ));  // menuBarHeight));
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbar_size_y));
     ImGui::SetNextWindowViewport(viewport->ID);
 
     ImGuiWindowFlags window_flags = 0 | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                                     ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-    ImGui::Begin("TOOLBAR", NULL, window_flags);
-    ImGui::PopStyleVar();
-    // auto lol = ImGui::CalcTextSize("Toolbar goes here");
-    // std::cout << "\t\t ()" << lol.x + ImGui::GetStyle().FramePadding.x * 2.0f << ", " << lol.y + ImGui::GetStyle().FramePadding.y * 2.0f << ")\n";
-    ImGui::Button("Toolbar goes here");  //, ImVec2(0, 37));
-
-    ImGui::End();
+    if (ImGui::Begin("TOOLBAR", NULL, window_flags)) {
+        ImGui::PopStyleVar();
+        ImGui::Text("%.1f FPS (%.3f ms/frame)", ImGui::GetIO().Framerate, 1000.0f / ImGui::GetIO().Framerate);
+        ImGui::End();
+    }
 }
 
 // const float toolbarSize = 50;
