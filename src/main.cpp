@@ -6,12 +6,14 @@
 #include "git.h"
 #include "draw.h"
 #include <SDL_timer.h>
+#include "video_player.h"
 // clang-format on
 
 static constexpr Uint64 FRAMES_PER_SECOND = 10U;
 static constexpr Uint64 SKIP_TICKS = 1000U / FRAMES_PER_SECOND;
+static const char* video = "/home/pattakosn/github.com/git-gui/assets/SampleVideo_360x240_1mb.mp4";
 
-int main(int, char **) {
+int main(int, char**) {
     std::cout << "\n[git-gui]\tGit-Gui 0.0.1\n\n";
     atexit(deinit);
     atexit(deinit);
@@ -29,10 +31,10 @@ int main(int, char **) {
     while (my_poll()) {
         my_imgui_loop_start();
 
-        my_imgui_demo();
-        // my_imgui_stupid_win();
-        // my_imgui_more_stupid_win();
-        menu();
+        menu_bar();
+        // tool_bar();
+        // property_panel();
+        // main_area();
         bottom_bar();
         my_imgui_loop_end();
 

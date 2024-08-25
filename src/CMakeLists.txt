@@ -1,6 +1,13 @@
 #windows fucker: choco install pkgconfiglite
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
+pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET libavformat)
+ #   libavdevice
+ #   libavfilter    
+ #   libavcodec
+ #   libswresample
+ #   libswscale
+ #   libavutil
 
 find_package(OpenGL REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
@@ -27,6 +34,8 @@ set(SOURCES
     main.cpp
     git.cpp git.h 
     draw.cpp draw.h
+    video_player.cpp video_player.h
+    load_texture_from_file.cpp load_texture_from_file.h
 )
 add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
@@ -39,4 +48,5 @@ target_link_libraries(git-gui
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
         $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
         PkgConfig::LIBGIT2
+        PkgConfig::LIBAV
 )

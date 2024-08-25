@@ -5,9 +5,9 @@ void graphics_shutdown();
 int my_poll();
 void my_imgui_loop_start();
 void my_imgui_loop_end();
-void my_imgui_demo();
-void my_imgui_stupid_win();
-void my_imgui_more_stupid_win();
-void menu();
+void menu_bar();
+void tool_bar();
+void property_panel();
+void main_area();
 void bottom_bar();
 #endif

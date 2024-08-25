@@ -9,12 +9,9 @@
 #include "imgui.h"
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
-#include "stb_image.h"
 #include "draw.h"
 #include "git.h"
 // clang-format on
-
-SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height);
 
 static SDL_Window* Window = nullptr;
 static SDL_Renderer* Renderer = nullptr;
@@ -60,8 +57,8 @@ void graphics_initialize() {
     SDL_ShowWindow(Window);
     int icon_width;
     int icon_length;
-    SDL_Surface* icon = IMG_Load(
-        "/home/pattakosn/github.com/git-gui/assets/git64-1.png");  // LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
+    // LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
+    SDL_Surface* icon = IMG_Load("/home/pattakosn/github.com/git-gui/assets/git64-1.png");
     if (!icon) std::cerr << "error loading icon\n";
     SDL_SetWindowIcon(Window, icon);
     SDL_FreeSurface(icon);
@@ -93,6 +90,7 @@ void graphics_initialize() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // IF using Docking Branch
     // io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigDockingWithShift = false;
 
     // Setup Platform/Renderer backends
     EXIT_ON_FALSE(!ImGui_ImplSDL2_InitForOpenGL(Window, glcontext), "Error Initializing ImGuiImplSDL2_OGL\n");
@@ -101,16 +99,8 @@ void graphics_initialize() {
     glClearColor(GL_GREY);
 }
 
-void basic_info() {
-    // ImGuiContext& g = *ImGui::GetCurrentContext();
-    ImGuiIO& io = ImGui::GetIO();
-
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-    ImGui::Text("%d vertices, %d indices (%d triangles)", io.MetricsRenderVertices, io.MetricsRenderIndices, io.MetricsRenderIndices / 3);
-    // ImGui::Text("%d visible windows, %d current allocations", io.MetricsRenderWindows, g.DebugAllocInfo.TotalAllocCount - g.DebugAllocInfo.TotalFreeCount);
-}
-
 void graphics_shutdown() {
+    repo_close();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
@@ -166,81 +156,21 @@ void my_imgui_loop_end() {
     // (Your code clears your framebuffer, renders your other stuff etc.)
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    // viewport specific    // Update and Render additional Platform Windows
+    // viewport specific    // (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+    // viewport specific    //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
+    // viewport specific    ImGuiIO& io = ImGui::GetIO();
+    // viewport specific    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    // viewport specific        SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+    // viewport specific        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+    // viewport specific        ImGui::UpdatePlatformWindows();
+    // viewport specific        ImGui::RenderPlatformWindowsDefault();
+    // viewport specific        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+    // viewport specific    }
+
     // (Your code calls SDL_GL_SwapWindow() etc.)
     SDL_GL_SwapWindow(Window);
-}
-
-void my_imgui_demo() { ImGui::ShowDemoWindow(); }
-
-void my_imgui_stupid_win() {
-    float speed = 0.;
-    bool param;
-    ImGui::Begin("stupid window");
-    ImGui::Checkbox("Boolean property", &param);
-    if (ImGui::Button("Reset Speed")) {
-        // This code is executed when the user clicks the button
-        speed = 0;
-    }
-    ImGui::SliderFloat("Speed", &speed, 0.0f, 10.0f);
-    ImGui::End();
-}
-
-static bool show_demo_window = false;
-static bool show_another_window = false;
-void my_imgui_more_stupid_win() {
-    std::cout << "\t\t SKATA\n";
-    static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    if (show_demo_window) ImGui::ShowDemoWindow(&show_demo_window);
-    // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-    {
-        static float f = 0.0f;
-        static int counter = 0;
-
-        ImGui::Begin("Hello, world!");  // Create a window called "Hello, world!" and append into it.
-
-        ImGui::Text("This is some useful text.");           // Display some text (you can use a format strings too)
-        ImGui::Checkbox("Demo Window", &show_demo_window);  // Edit bools storing our window open/close state
-        ImGui::Checkbox("Another Window", &show_another_window);
-
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);             // Edit 1 float using a slider from 0.0f to 1.0f
-        ImGui::ColorEdit3("clear color", (float*)&clear_color);  // Edit 3 floats representing a color
-
-        if (ImGui::Button("Button"))  // Buttons return true when clicked (most widgets return true when edited/activated)
-            counter++;
-        ImGui::SameLine();
-        ImGui::Text("counter = %d", counter);
-
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
-
-    // 3. Show another simple window.
-    if (show_another_window) {
-        ImGui::Begin("Another Window", &show_another_window);  // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
-        if (ImGui::Button("Close Me")) show_another_window = false;
-        ImGui::End();
-    }
-}
-
-SDL_Surface* LoadTextureFromFile(const char* filename, int& width, int& height) {
-    int channels;
-    unsigned char* data = stbi_load(filename, &width, &height, &channels, 0);
-
-    if (data == nullptr) {
-        fprintf(stderr, "Failed to load image: %s\n", stbi_failure_reason());
-        return nullptr;
-    }
-
-    SDL_Surface* surface = SDL_CreateRGBSurfaceFrom((void*)data, width, height, channels * 8, channels * width, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
-
-    if (surface == nullptr) {
-        fprintf(stderr, "Failed to create SDL surface: %s\n", SDL_GetError());
-        return nullptr;
-    }
-    stbi_image_free(data);
-    return surface;
 }
 
 // TODO remove me
@@ -254,19 +184,22 @@ static void HelpMarker(const char* desc) {
     }
 }
 bool show_open_menu = false;
-
+bool show_gui_debug_info = false;
+bool show_no_git_found_error = false;
+std::string show_no_git_found_error_msg{};
+bool show_demo_win = false;
 void OpenMenu() {
     static char open_dir[128];
-    static bool once = true;
-    if (once) {
+    static bool cwd_isnt_initialized = true;
+    if (cwd_isnt_initialized) {
         std::strncpy(open_dir, std::filesystem::current_path().c_str(), 127);
         open_dir[127] = '\0';
-        once = false;
+        cwd_isnt_initialized = false;
     }
 
     ImGui::SetWindowSize({300, 60});
-    if (ImGui::Begin("Open Repository in")) {
-        ImGui::InputText("directory", open_dir, IM_ARRAYSIZE(open_dir));
+    if (ImGui::Begin("Open Repository in", &show_open_menu)) {
+        ImGui::InputText("##", open_dir, IM_ARRAYSIZE(open_dir));
         ImGui::SameLine();
         HelpMarker(
             "USER:\n"
@@ -287,26 +220,36 @@ void OpenMenu() {
         float off = (avail - size) * 0.5f;  // center alignment
         if (off > 0.0f) ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
         if (ImGui::Button("Open")) {
-            if (0 == open_repo(open_dir)) {
-                std::cout << "FOUND and opened repo in: " << open_dir << "\n";
-            } else {
-                std::cout << "Couldn't find or open repo in: " << open_dir << "\n";
-            }
-            show_open_menu = false;
+            auto res = repo_open(open_dir);
+            if (!res.empty()) {
+                show_no_git_found_error = true;
+                show_no_git_found_error_msg = res;
+            } else
+                show_open_menu = false;
+        }
+        ImGui::End();
+    }
+    if (show_no_git_found_error) {
+        // ImGui::SetWindowSize(ImVec2(150, 75));
+        if (ImGui::Begin("Git repo not found", &show_no_git_found_error)) {  //}, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
+            ImGui::Text("%s", show_no_git_found_error_msg.c_str());
+            if (ImGui::Button("OK")) show_no_git_found_error = false;
         }
         ImGui::End();
     }
 }
 
-void menu() {
+void menu_bar() {
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             // ImGui::MenuItem("sample", NULL, false, false);
             if (ImGui::MenuItem("Open repository", "Ctrl+O", &show_open_menu)) {
                 std::cout << "Open\n";
             }
+            if (ImGui::MenuItem("Close repository")) {
+                repo_close();
+            }
             if (ImGui::MenuItem("Create repository", "Ctrl+N")) {
-                my_imgui_more_stupid_win();
                 std::cout << "Created\n";
             }
             if (ImGui::MenuItem("Scan for repositories")) {
@@ -318,6 +261,7 @@ void menu() {
             }
             ImGui::EndMenu();
         }
+
         if (ImGui::BeginMenu("Repository")) {
             if (ImGui::MenuItem("Fetch")) {
                 std::cout << "Fetch\n";
@@ -337,10 +281,18 @@ void menu() {
             }
             ImGui::EndMenu();
         }
+
+        if (ImGui::BeginMenu("About")) {
+            if (ImGui::MenuItem("gui debug info")) show_gui_debug_info = !show_gui_debug_info;
+            if (ImGui::MenuItem("demo window")) show_demo_win = !show_demo_win;
+            ImGui::EndMenu();
+        }
         ImGui::EndMainMenuBar();
     }
 
     if (show_open_menu) OpenMenu();
+    if (show_gui_debug_info) ImGui::ShowMetricsWindow(&show_gui_debug_info);
+    if (show_demo_win) ImGui::ShowDemoWindow(&show_demo_win);
 }
 
 void bottom_bar() {
@@ -360,55 +312,24 @@ void bottom_bar() {
         ImGui::End();
     }
 }
+/*
+void tool_bar() {
+    ImGui::SetNextWindowSize(ImVec2(200, -1));
+    ImGui::Begin("Toolbar");
+    // Add toolbar items here
+    ImGui::End();
+}
+void property_panel() {
+    ImGui::SetNextWindowSize(ImVec2(200, -1));
+    ImGui::SetNextWindowPos(ImVec2(ImGui::GetIO().DisplaySize.x - 200, 0));
+    ImGui::Begin("Property Panel");
+    // Add property panel items here
+    ImGui::End();
+}
 
-// const float toolbarSize = 50;
-//
-// void DockSpaceUI()
-//{
-//	ImGuiViewport* viewport = ImGui::GetMainViewport();
-//	ImGui::SetNextWindowPos(viewport->Pos + ImVec2(0, toolbarSize));
-//	ImGui::SetNextWindowSize(viewport->Size - ImVec2(0, toolbarSize));
-//	ImGui::SetNextWindowViewport(viewport->ID);
-//	ImGuiWindowFlags window_flags = 0
-//		| ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
-//		| ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
-//		| ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
-//		| ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-//
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-//	ImGui::Begin("Master DockSpace", NULL, window_flags);
-//	ImGuiID dockMain = ImGui::GetID("MyDockspace");
-//
-//	// Save off menu bar height for later.
-//	menuBarHeight = ImGui::GetCurrentWindow()->MenuBarHeight();
-//
-//	ImGui::DockSpace(dockMain);
-//	ImGui::End();
-//	ImGui::PopStyleVar(3);
-// }
-//
-// void ToolbarUI()
-//{
-//	ImGuiViewport* viewport = ImGui::GetMainViewport();
-//	ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuBarHeight));
-//	ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbarSize));
-//	ImGui::SetNextWindowViewport(viewport->ID);
-//
-//	ImGuiWindowFlags window_flags = 0
-//		| ImGuiWindowFlags_NoDocking
-//		| ImGuiWindowFlags_NoTitleBar
-//		| ImGuiWindowFlags_NoResize
-//		| ImGuiWindowFlags_NoMove
-//		| ImGuiWindowFlags_NoScrollbar
-//		| ImGuiWindowFlags_NoSavedSettings
-//		;
-//	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-//	ImGui::Begin("TOOLBAR", NULL, window_flags);
-//	ImGui::PopStyleVar();
-//
-//	ImGui::Button("Toolbar goes here", ImVec2(0, 37));
-//
-//	ImGui::End();
-// }
+void main_area() {
+    ImGui::Begin("Main Content Area");
+    // Add main content items here
+    ImGui::End();
+}
+*/
