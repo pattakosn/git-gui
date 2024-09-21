@@ -1,14 +1,103 @@
 {
-    "version": 2,
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
     "configurePresets": [
         {
-            "name": "default",
+            "name": "clang",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
+                "CMAKE_C_COMPILER": "/usr/bin/clang",
+                "CMAKE_CXX_COMPILER": "/usr/bin/clang++"
+            }
+        },
+        {
+            "name": "clang-dbg",
+            "inherits": "clang",
+            "displayName": "Clang Debug",
+            "description": "",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "clang-rel",
+            "inherits": "clang",
+            "displayName": "Clang Release",
+            "description": "",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "gcc",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/install/${presetName}",
+                "CMAKE_C_COMPILER": "/usr/bin/gcc",
+                "CMAKE_CXX_COMPILER": "/usr/bin/g++"
+            }
+        },
+        {
+            "name": "gcc-dbg",
+            "inherits": "gcc",
+            "displayName": "GCC Debug",
+            "description": "",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "gcc-rel",
+            "inherits": "gcc",
+            "displayName": "GCC Release",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "MSVC 2022",
             "generator": "Visual Studio 17 2022",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "D:/github.com/vcpkg1/scripts/buildsystems/vcpkg.cmake",
                 "CMAKE_PREFIX_PATH": "D:/github.com/vcpkg1/installed/x64-windows"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "ClandDbgB",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-dbg"
+        },
+        {
+            "name": "ClangRelB",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "clang-rel"
+        },
+        {
+            "name": "GccDbgB",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-dbg"
+        },
+        {
+            "name": "GccRelB",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "gcc-rel"
         }
     ]
 }
