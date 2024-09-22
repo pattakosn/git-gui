@@ -31,7 +31,7 @@ void deinit(void) {
 }
 
 void find_repo(std::string path, std::string max_path) {
-    git_buf root = {0};
+    git_buf root = {};
     int error = git_repository_discover(&root, path.c_str(), 1, max_path.c_str());
     check_error(error);
     std::cout << "[libgit2] found repo at: " << root.ptr << "\n";

@@ -11,7 +11,7 @@
 
 static constexpr Uint64 FRAMES_PER_SECOND = 10U;
 static constexpr Uint64 SKIP_TICKS = 1000U / FRAMES_PER_SECOND;
-static const char* video = "/home/pattakosn/github.com/git-gui/assets/SampleVideo_360x240_1mb.mp4";
+//tatic const char* video = "/home/pattakosn/github.com/git-gui/assets/SampleVideo_360x240_1mb.mp4";
 
 int main(int, char**) {
     std::cout << "\n[git-gui]\tGit-Gui 0.0.1\n\n";

@@ -14,7 +14,7 @@
 // clang-format on
 
 static SDL_Window* Window = nullptr;
-static SDL_Renderer* Renderer = nullptr;
+//static SDL_Renderer* Renderer = nullptr;
 static SDL_GLContext glcontext = nullptr;
 static constexpr int width = 1200;
 static constexpr int height = (width / 4.) * 3.;
@@ -55,8 +55,8 @@ void graphics_initialize() {
     SDL_SetWindowPosition(Window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_SetWindowTitle(Window, "git-gui");
     SDL_ShowWindow(Window);
-    int icon_width;
-    int icon_length;
+    //int icon_width;
+    //int icon_length;
     // LoadTextureFromFile("D:/github.com/git-gui/assets/slack-penguin-bw-255x300.png", icon_width, icon_length);
     SDL_Surface* icon = IMG_Load("/home/pattakosn/github.com/git-gui/assets/git64-1.png");
     if (!icon) std::cerr << "error loading icon\n";

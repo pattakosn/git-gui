@@ -50,3 +50,7 @@ target_link_libraries(git-gui
         PkgConfig::LIBGIT2
         PkgConfig::LIBAV
 )
+target_compile_options(git-gui PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+)
