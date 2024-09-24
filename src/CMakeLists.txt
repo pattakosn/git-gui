@@ -36,6 +36,7 @@ set(SOURCES
     draw.cpp draw.h
     video_player.cpp video_player.h
     load_texture_from_file.cpp load_texture_from_file.h
+    imgui_spectrum.h
 )
 add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
