@@ -58,12 +58,12 @@ void repo_close() {
 
 int open_repo(char *path) {
     int error;
-    git_repository *repo{nullptr};
-    error = git_repository_open(&repo, path);
+    git_repository *local_repo{nullptr};
+    error = git_repository_open(&local_repo, path);
     if (error) {
         const git_error *e = git_error_last();
         std::cerr << "\tError " << error << "/" << e->klass << ": " << e->message << "\n";
     }
-    git_repository_free(repo);
+    git_repository_free(local_repo);
     return error;
 }

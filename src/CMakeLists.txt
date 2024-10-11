@@ -1,7 +1,7 @@
 #windows fucker: choco install pkgconfiglite
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(LIBGIT2 REQUIRED IMPORTED_TARGET libgit2)
-pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET libavformat)
+#pkg_check_modules(LIBAV REQUIRED IMPORTED_TARGET libavformat)
  #   libavdevice
  #   libavfilter    
  #   libavcodec
@@ -34,7 +34,7 @@ set(SOURCES
     main.cpp
     git.cpp git.h 
     draw.cpp draw.h
-    video_player.cpp video_player.h
+  #  video_player.cpp video_player.h
     load_texture_from_file.cpp load_texture_from_file.h
     imgui_spectrum.h
 )
@@ -49,9 +49,9 @@ target_link_libraries(git-gui
         $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
         $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>
         PkgConfig::LIBGIT2
-        PkgConfig::LIBAV
+    #    PkgConfig::LIBAV
 )
 target_compile_options(git-gui PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>
+  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /permissive->
   $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
 )

@@ -26,8 +26,8 @@ int main(int, char**) {
     graphics_initialize();
 
     bool once = true;
-    int sleep_time = 0;
-    auto next_tick = SDL_GetTicks64();
+    auto next_tick = SDL_GetTicks();
+    decltype(next_tick) sleep_time = 0;
     while (my_poll()) {
         my_imgui_loop_start();
 
@@ -39,7 +39,7 @@ int main(int, char**) {
         my_imgui_loop_end();
 
         next_tick += SKIP_TICKS;
-        sleep_time = next_tick - SDL_GetTicks64();
+        sleep_time = next_tick - SDL_GetTicks();
         if (sleep_time >= 0) {
             SDL_Delay(sleep_time);
             once = true;

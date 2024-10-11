@@ -1,7 +1,7 @@
 // clang-format off
 #include <iostream>
 #include <filesystem>
-#include <cstring>
+#include <string>
 #include <glad/gl.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -17,7 +17,7 @@ static SDL_Window* Window = nullptr;
 // static SDL_Renderer* Renderer = nullptr;
 static SDL_GLContext glcontext = nullptr;
 static constexpr int width = 1200;
-static constexpr int height = (width / 4.) * 3.;
+static constexpr int height = width * 3 / 4;
 
 #define CHECK_SDL_RESULT(X, MSG)                                       \
     do {                                                               \
@@ -33,7 +33,7 @@ static constexpr int height = (width / 4.) * 3.;
             exit(EXIT_FAILURE);             \
         }                                   \
     } while (0)
-#define GL_GREY .15, .15, .15, 1
+#define GL_GREY .15f, .15f, .15f, 1.f
 
 void graphics_initialize() {
     CHECK_SDL_RESULT(SDL_Init(SDL_INIT_EVENTS | SDL_INIT_TIMER | SDL_INIT_VIDEO), "Initialisation failure: ");
@@ -190,11 +190,11 @@ std::string show_no_git_found_error_msg{};
 bool show_demo_win = false;
 bool show_theme_win = true;
 void OpenMenu() {
-    static char open_dir[128];
+    constexpr int path_size = 128;
+    static char open_dir[path_size];
     static bool cwd_isnt_initialized = true;
     if (cwd_isnt_initialized) {
-        std::strncpy(open_dir, std::filesystem::current_path().c_str(), 127);
-        open_dir[127] = '\0';
+        strncpy_s(open_dir, path_size, std::filesystem::current_path().string().c_str(), path_size - 1);
         cwd_isnt_initialized = false;
     }
 
@@ -409,12 +409,12 @@ void dracula() {
     colors[ImGuiCol_TextDisabled] = ImVec4{0.5f, 0.5f, 0.5f, 1.0f};
 
     // Headers
-    colors[ImGuiCol_Header] = ImVec4{0.13f, 0.13f, 0.17, 1.0f};
+    colors[ImGuiCol_Header] = ImVec4{0.13f, 0.13f, 0.17f, 1.0f};
     colors[ImGuiCol_HeaderHovered] = ImVec4{0.19f, 0.2f, 0.25f, 1.0f};
     colors[ImGuiCol_HeaderActive] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
 
     // Buttons
-    colors[ImGuiCol_Button] = ImVec4{0.13f, 0.13f, 0.17, 1.0f};
+    colors[ImGuiCol_Button] = ImVec4{0.13f, 0.13f, 0.17f, 1.0f};
     colors[ImGuiCol_ButtonHovered] = ImVec4{0.19f, 0.2f, 0.25f, 1.0f};
     colors[ImGuiCol_ButtonActive] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
     colors[ImGuiCol_CheckMark] = ImVec4{0.74f, 0.58f, 0.98f, 1.0f};
@@ -427,13 +427,13 @@ void dracula() {
     colors[ImGuiCol_SliderGrabActive] = ImVec4{0.74f, 0.58f, 0.98f, 0.54f};
 
     // Frame BG
-    colors[ImGuiCol_FrameBg] = ImVec4{0.13f, 0.13, 0.17, 1.0f};
+    colors[ImGuiCol_FrameBg] = ImVec4{0.13f, 0.13f, 0.17f, 1.0f};
     colors[ImGuiCol_FrameBgHovered] = ImVec4{0.19f, 0.2f, 0.25f, 1.0f};
     colors[ImGuiCol_FrameBgActive] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
 
     // Tabs
     colors[ImGuiCol_Tab] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
-    colors[ImGuiCol_TabHovered] = ImVec4{0.24, 0.24f, 0.32f, 1.0f};
+    colors[ImGuiCol_TabHovered] = ImVec4{0.24f, 0.24f, 0.32f, 1.0f};
     colors[ImGuiCol_TabActive] = ImVec4{0.2f, 0.22f, 0.27f, 1.0f};
     colors[ImGuiCol_TabUnfocused] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
     colors[ImGuiCol_TabUnfocusedActive] = ImVec4{0.16f, 0.16f, 0.21f, 1.0f};
@@ -744,7 +744,7 @@ void bottom_bar() {
     auto text_size = ImGui::CalcTextSize("FPS");
     auto toolbar_size_y = text_size.y + ImGui::GetStyle().FramePadding.y;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, ImGui::GetIO().DisplaySize.y - 2. * toolbar_size_y));  // ));  // menuBarHeight));
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, ImGui::GetIO().DisplaySize.y - 2.f * toolbar_size_y));  // ));  // menuBarHeight));
     ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, toolbar_size_y));
     ImGui::SetNextWindowViewport(viewport->ID);
 

@@ -1,5 +1,7 @@
 {
   "dependencies": [
-    "libgit2"
+    "libgit2",
+    "sdl2",
+    "sdl2-image"
   ]
 }
