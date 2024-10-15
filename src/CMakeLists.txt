@@ -35,6 +35,7 @@ set(SOURCES
     git.cpp git.h 
     draw.cpp draw.h
   #  video_player.cpp video_player.h
+    themes.cpp themes.h
     load_texture_from_file.cpp load_texture_from_file.h
     imgui_spectrum.h
 )
