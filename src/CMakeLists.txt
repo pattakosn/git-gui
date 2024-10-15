@@ -54,5 +54,5 @@ target_link_libraries(git-gui
 )
 target_compile_options(git-gui PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /permissive->
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror>
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror -D_FORTIFY_SOURCE>
 )

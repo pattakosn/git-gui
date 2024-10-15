@@ -27,7 +27,7 @@ int main(int, char**) {
 
     bool once = true;
     auto next_tick = SDL_GetTicks();
-    decltype(next_tick) sleep_time = 0;
+    long int sleep_time = 0;
     while (my_poll()) {
         my_imgui_loop_start();
 
