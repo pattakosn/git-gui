@@ -4,6 +4,7 @@
 // clang-format off
 #include <iostream>
 #include "git.h"
+#include "initialization.h"
 #include "draw.h"
 #include <SDL_timer.h>
 #include "video_player.h"
@@ -11,7 +12,7 @@
 
 static constexpr Uint64 FRAMES_PER_SECOND = 10U;
 static constexpr Uint64 SKIP_TICKS = 1000U / FRAMES_PER_SECOND;
-//tatic const char* video = "/home/pattakosn/github.com/git-gui/assets/SampleVideo_360x240_1mb.mp4";
+// static const char* video = "/home/pattakosn/github.com/git-gui/assets/SampleVideo_360x240_1mb.mp4";
 
 int main(int, char**) {
     std::cout << "\n[git-gui]\tGit-Gui 0.0.1\n\n";
@@ -29,14 +30,13 @@ int main(int, char**) {
     auto next_tick = SDL_GetTicks();
     long int sleep_time = 0;
     while (my_poll()) {
-        my_imgui_loop_start();
-
+        imgui_loop_start();
         menu_bar();
         // tool_bar();
         // property_panel();
         // main_area();
         bottom_bar();
-        my_imgui_loop_end();
+        imgui_loop_end();
 
         next_tick += SKIP_TICKS;
         sleep_time = next_tick - SDL_GetTicks();
@@ -51,6 +51,7 @@ int main(int, char**) {
         }
     }
 
+    repo_close();
     graphics_shutdown();
     return EXIT_SUCCESS;
 }

@@ -31,13 +31,15 @@ set(IMGUI_SRC
 )
 
 set(SOURCES
-    main.cpp
-    git.cpp git.h 
+    bottom_bar.cpp bottom_bar.h
     draw.cpp draw.h
-  #  video_player.cpp video_player.h
-    themes.cpp themes.h
-    load_texture_from_file.cpp load_texture_from_file.h
+    git.cpp git.h
     imgui_spectrum.h
+    initialization.cpp initialization.h
+    main.cpp
+    load_texture_from_file.cpp load_texture_from_file.h
+    themes.cpp themes.h
+    #  video_player.cpp video_player.h
 )
 add_executable(git-gui ${SOURCES} ${IMGUI_SRC})
 target_include_directories(git-gui PRIVATE imgui imgui/backends imgui/misc/cpp)
