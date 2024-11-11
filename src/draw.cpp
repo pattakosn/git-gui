@@ -170,6 +170,18 @@ void menu_bar() {
     if (show_theme_win) Themes();
 }
 
+void imgui_shortcut_handler()
+{
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_O)) {
+        show_open_menu = true;
+        std::cout << "Open menu keyboard\n";
+    }
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_N))
+        std::cout << "new repo from keyboard?\n";
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Z))
+        please_exit = true;
+}
+
 /*
     ImGui::SetNextWindowSize(ImVec2(200, -1));
     ImGui::Begin("Toolbar");

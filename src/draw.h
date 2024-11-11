@@ -6,4 +6,5 @@ void tool_bar();
 void property_panel();
 void main_area();
 void bottom_bar();
+void imgui_shortcut_handler();
 #endif

@@ -36,6 +36,7 @@ int main(int, char**) {
         // property_panel();
         // main_area();
         bottom_bar();
+        imgui_shortcut_handler();
         imgui_loop_end();
 
         next_tick += SKIP_TICKS;
