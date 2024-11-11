@@ -101,6 +101,11 @@ void OpenMenu() {
         // ImGui::SetWindowSize(ImVec2(150, 75));
         if (ImGui::Begin("Git repo not found", &show_no_git_found_error)) {  //}, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse)) {
             ImGui::Text("%s", show_no_git_found_error_msg.c_str());
+            float size = ImGui::CalcTextSize("OK").x + ImGui::GetStyle().FramePadding.x * 2.0f;
+            float avail = ImGui::GetContentRegionAvail().x;
+            float off = (avail - size) * 0.5f;  // center alignment
+            if (off > 0.0f) 
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off);
             if (ImGui::Button("OK")) show_no_git_found_error = false;
         }
         ImGui::End();
