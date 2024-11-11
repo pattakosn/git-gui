@@ -22,3 +22,10 @@ This sounds somewhat contradictory but on a current Debian Jessie, you will in f
 
 Of course you also need a desktop file in /usr/share/applications/ for your program.
 [also check arch linux desktop entries wiki](https://wiki.archlinux.org/title/Desktop_entries)
+
+
+    SetNextWindowSize({100,100})
+    ImVec2 window_pos {ImGui::GetWindowPos()}
+    ImVec2 window_size {ImGui::GetWindowSize()}
+    ImVec2 cursor_pos {ImGui::GetCursorPos()}
+    ImGui::SameLine((ImGui::GetContentRegionAvail().x/2)-(size.x/2))
