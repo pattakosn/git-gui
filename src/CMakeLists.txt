@@ -55,6 +55,6 @@ target_link_libraries(git-gui
     #    PkgConfig::LIBAV
 )
 target_compile_options(git-gui PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX /permissive->
-  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall -Wextra -Wpedantic -Werror -D_FORTIFY_SOURCE>
+  $<$<CXX_COMPILER_ID:MSVC>:/W4;/WX;/permissive->
+  $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall;-Wextra;-Wpedantic;-Werror;$<$<CONFIG:Release>:-D_FORTIFY_SOURCE>>
 )
