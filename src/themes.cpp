@@ -4,7 +4,7 @@
 #include "imgui_spectrum.h"
 // clang-format on
 
-bool show_theme_win = true;
+bool show_theme_win = false;
 
 void adobe_spectrum() {
     ImGuiStyle* style = &ImGui::GetStyle();

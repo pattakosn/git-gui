@@ -66,7 +66,7 @@ void OpenMenu() {
     }
 
     ImGui::SetWindowSize({300, 60});
-    if (ImGui::Begin("Open Repository in", &show_open_menu)) {
+    if (ImGui::Begin("Open Repository in", &show_open_menu)){ //}, ImGuiWindowFlags_NoDecoration ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse)) {
         ImGui::InputText("##", open_dir, IM_ARRAYSIZE(open_dir));
         ImGui::SameLine();
         HelpMarker(
@@ -92,6 +92,9 @@ void OpenMenu() {
             if (!res.empty()) {
                 show_no_git_found_error = true;
                 show_no_git_found_error_msg = res;
+                auto detected_repo = find_repo();
+                if(!detected_repo.empty())
+                ;//    show_no_git_found_error_msg += "\n"
             } else
                 show_open_menu = false;
         }

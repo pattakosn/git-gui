@@ -30,12 +30,14 @@ void deinit(void) {
     std::cout << "[libgit2] Shut down, times left: " << err << "\n";
 }
 
-void find_repo(std::string path, std::string max_path) {
+std::string find_repo(std::string path, std::string max_path) {
     git_buf root = {};
     int error = git_repository_discover(&root, path.c_str(), 1, max_path.c_str());
     check_error(error);
     std::cout << "[libgit2] found repo at: " << root.ptr << "\n";
+    std::string result(root.ptr);
     git_buf_dispose(&root); /* returned path data must be freed after use */
+    return result;
 }
 
 static git_repository *repo{nullptr};
