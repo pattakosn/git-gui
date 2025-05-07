@@ -62,6 +62,7 @@ void OpenMenu() {
     static bool cwd_isnt_initialized = true;
     if (cwd_isnt_initialized) {
         strncpy(open_dir, std::filesystem::current_path().string().c_str(), path_size - 1);
+        open_dir[path_size - 1] = '\0'; // Ensure null termination
         cwd_isnt_initialized = false;
     }
 
